@@ -3,8 +3,13 @@ version: '3.7'
 services:
     api:
         build: ./api/
+        links:
+            - db
         ports:
             - 8081:8090
+        environment: 
+            - POSTGRES_HOST=db
+            - POSTGRES_DATABASE_NAME=postgres
         secrets:
             - POSTGRES_USER
             - POSTGRES_PASSWORD
