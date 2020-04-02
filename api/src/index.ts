@@ -2,6 +2,8 @@ import express from "express";
 import { getSecret } from "./secrets";
 import { Client } from "pg";
 import cors from "cors";
+import SqlString from "sqlstring";
+import bodyParser from "body-parser";
 
 const client = new Client({
     host: process.env.POSTGRES_HOST,
@@ -22,20 +24,40 @@ const corsOptions: cors.CorsOptions = {
 }
 app.use(cors(corsOptions));
 
-app.get("/", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-        const rows = await client.query("SELECT * FROM users");
-        
-        console.log(rows);
-        
-        res.status(200).send("asd");
-    } catch(e) {
-        next(e);
-    }
-});
+app.use(bodyParser.json());
 
-app.use((err: express.Errback, req: express.Request, res: express.Response) => {
-    console.error(err);
+app.route("/users")
+    .get(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+            const rows = await client.query(SqlString.format("SELECT * FROM users", []));
+            res.status(200).json({ rows: rows.rows });
+        } catch(e) {
+            next(e);
+        }
+    })
+    .post(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+            const rows = await client.query(SqlString.format("INSERT INTO users VALUES (nextVal('userid'), ?)", [ req.body.username ]));
+            res.status(200).json({ success: true });
+        } catch(e) {
+            next(e);
+        }
+    });
+    
+app.route("/users/:id")
+    .delete(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+            await client.query(SqlString.format("DELETE FROM users WHERE id = ?", [ req.params.id ]));
+            res.status(200).json({ success: true });
+        } catch(e) {
+            next(e);
+        }
+    });
+
+
+app.use((err: express.Errback, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.log(err);
+    
     res.status(500).json({ error: err });
 });
 
