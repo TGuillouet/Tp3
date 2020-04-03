@@ -8,8 +8,6 @@ import TopBar from './TopBar';
 
 function getUsers(): Promise<[]> {
   return axios.get(process.env.REACT_APP_API_BASE_URL + "/users", {  }).then((res: AxiosResponse) => {
-    console.log(res.data);
-    
     return res.data.rows
   });
 }

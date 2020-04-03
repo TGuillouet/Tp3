@@ -1,7 +1,6 @@
 import React from "react";
 
 function Table(props) {
-    console.log(props.items)
     const rows = (props.items || []).map(props.render)
 
     return (

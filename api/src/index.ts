@@ -12,13 +12,6 @@ const pool = new Pool({
     password: getSecret("POSTGRES_PASSWORD")
 });
 
-console.log({
-    host: process.env.POSTGRES_HOST,
-    database: process.env.POSTGRES_DATABASE_NAME,
-    user: getSecret("POSTGRES_USER"),
-    password: getSecret("POSTGRES_PASSWORD")
-});
-
 const app = express();
 const corsOptions: cors.CorsOptions = {
     origin: [
@@ -82,11 +75,4 @@ app.use((err: express.Errback, req: express.Request, res: express.Response, next
 // start the Express server
 app.listen(process.env.PORT, () => {
     console.log(`Server started at http://localhost:${process.env.PORT}`);
-    // client.connect()
-    // .then(() => {
-    //     console.log("Connected to the database");
-    // })
-    // .catch((error) => {
-    //     console.log("Error", error); 
-    // });
 });
