@@ -22,23 +22,6 @@ function deleteUser(id: number) {
   return axios.delete(process.env.REACT_APP_API_BASE_URL + "/users/" + id, {}).then((res: AxiosResponse) => res.data.success)
 }
 
-function deleteRow(id: number) {
-  return (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-
-    deleteUser(id);
-  }
-}
-
-function generateRowComponent({ id, username }: any) {
-  return (
-    <tr key={id}>
-        <td>{username}</td>
-        <td><button onClick={deleteRow(id)} className="button is-primary">Supprimer</button></td>
-    </tr>
-  )
-}
-
 function App() {
   const [ users, setUsers ] = React.useState([]);
   const [isLoading, setIsloading] = React.useState(false);
@@ -59,6 +42,26 @@ function App() {
       console.error(e)
     }
   }, [ addUser ]);
+
+  function deleteRow(id: number) {
+    return async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+  
+      await deleteUser(id);
+  
+      const fetchedUsers = await getUsers();
+      setUsers(fetchedUsers);
+    }
+  }
+
+  function generateRowComponent({ id, username }: any) {
+    return (
+      <tr key={id}>
+          <td>{username}</td>
+          <td><button onClick={deleteRow(id)} className="button is-primary">Supprimer</button></td>
+      </tr>
+    )
+  }
 
   return (
     <div className="App">
