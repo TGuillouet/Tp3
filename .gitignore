@@ -1,6 +1,7 @@
 node_modules/
 
-secrets/
+# vvvv IRL decommenter ça vvvv
+# secrets/
 
 yarn-error.log
 
